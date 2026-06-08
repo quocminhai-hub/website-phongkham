@@ -3740,6 +3740,21 @@
   let scheduleSelectedDateRange = []; 
   let scheduleFlatpickr = null;
 
+  function parseAppointments(appts) {
+    return (appts || []).map(apt => {
+      let services = apt['Dịch vụ'];
+      if (typeof services === 'string') {
+        try {
+          services = JSON.parse(services);
+        } catch (e) {
+          services = [];
+        }
+      }
+      apt['Dịch vụ'] = Array.isArray(services) ? services : [];
+      return apt;
+    });
+  }
+
   
   let currentUser = null;
   let isLoggedIn = false;
@@ -3796,7 +3811,7 @@
 
       if (allData) {
         doctors = allData.doctors || [];
-        appointments = allData.appointments || [];
+        appointments = parseAppointments(allData.appointments);
         patients = allData.patients || [];
         services = allData.services || [];
         users = allData.users || []; 
@@ -3834,7 +3849,7 @@
       ]);
 
       doctors = doctorsData || [];
-      appointments = appointmentsData || [];
+      appointments = parseAppointments(appointmentsData);
       patients = patientsData || [];
       services = servicesData || [];
       users = usersData || [];
@@ -3912,7 +3927,7 @@
       ]);
 
       doctors = doctorsData || [];
-      appointments = appointmentsData || [];
+      appointments = parseAppointments(appointmentsData);
       patients = patientsData || [];
       services = servicesData || [];
       dashboardData = dashboardStats || {};
@@ -7219,7 +7234,7 @@
       if (allData) {
         
         doctors = allData.doctors || [];
-        appointments = allData.appointments || [];
+        appointments = parseAppointments(allData.appointments);
         patients = allData.patients || [];
         services = allData.services || [];
 
@@ -8144,7 +8159,7 @@
         const newData = await callServerFunction('getAllData');
         if (newData) {
           doctors = newData.doctors || [];
-          appointments = newData.appointments || [];
+          appointments = parseAppointments(newData.appointments);
           patients = newData.patients || [];
           services = newData.services || [];
           if (typeof reRenderActiveTabs === 'function') reRenderActiveTabs();
@@ -8196,7 +8211,7 @@
         const newData = await callServerFunction('getAllData');
         if (newData) {
           doctors = newData.doctors || [];
-          appointments = newData.appointments || [];
+          appointments = parseAppointments(newData.appointments);
           patients = newData.patients || [];
           services = newData.services || [];
           if (typeof reRenderActiveTabs === 'function') reRenderActiveTabs();
