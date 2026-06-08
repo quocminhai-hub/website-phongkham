@@ -3011,6 +3011,14 @@
     color: #1E2937;
   }
 
+  .searchable-dropdown-input.selected {
+    color: #1E2937 !important;
+  }
+
+  .searchable-dropdown-input.selected::placeholder {
+    color: #1E2937 !important;
+  }
+
    
   .appointment {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -7370,6 +7378,7 @@
         type="text" 
         class="searchable-dropdown-input${selectedOption ? ' selected' : ''}" 
         placeholder="${selectedOption ? selectedOption.text : placeholder}"
+        value="${selectedOption ? selectedOption.text : ''}"
         autocomplete="off"
       >
       <input type="hidden" name="${name}" value="${selectedValue}" ${required ? 'required' : ''}>
@@ -7417,7 +7426,7 @@
 
     function selectOption(option) {
       selectedOption = option;
-      input.value = '';
+      input.value = option.text;
       input.placeholder = option.text;
       hiddenInput.value = option.value;
       input.classList.add('selected'); // Thêm class để chữ màu trắng
@@ -7441,9 +7450,11 @@
       setTimeout(() => {
         if (!dropdown.contains(document.activeElement)) {
           closeDropdown();
-          input.value = '';
           if (selectedOption) {
+            input.value = selectedOption.text;
             input.placeholder = selectedOption.text;
+          } else {
+            input.value = '';
           }
         }
       }, 150);
