@@ -2895,6 +2895,7 @@
   }
 
    
+  .searchable-dropdown-list,
   .searchable-dropdown-options,
   .dropdown-options {
     background: #FFFFFF;
@@ -7423,7 +7424,8 @@
       }, 150);
     });
 
-    list.addEventListener('click', (e) => {
+    list.addEventListener('mousedown', (e) => {
+      e.preventDefault(); // Ngăn sự kiện blur của input ẩn danh sách trước khi chọn
       const option = e.target.closest('.searchable-dropdown-option');
       if (option && option.dataset.value) {
         const selectedOpt = options.find(opt => opt.value === option.dataset.value);
