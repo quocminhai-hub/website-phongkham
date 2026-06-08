@@ -5674,14 +5674,13 @@
     `;
 
     // Load settings from server
-    google.script.run
-      .withSuccessHandler(function(settings) {
+    callServerFunction('getGeneralSettings')
+      .then(function(settings) {
         renderGeneralForm(container, settings || {});
       })
-      .withFailureHandler(function(err) {
+      .catch(function(err) {
         container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Lỗi tải cấu hình: ' + err.message + '</p></div>';
-      })
-      .getGeneralSettings();
+      });
   }
 
   function renderGeneralForm(container, settings) {
@@ -5770,9 +5769,7 @@
 
       try {
         setButtonLoading(btn, true);
-        const result = await new Promise(function(ok, fail) {
-          google.script.run.withSuccessHandler(ok).withFailureHandler(fail).saveGeneralSettings(settingsObj);
-        });
+        const result = await callServerFunction('saveGeneralSettings', settingsObj);
         if (result.success) {
           showNotification('Lưu cấu hình thành công', 'success');
         } else {
@@ -8047,9 +8044,7 @@
 
     try {
       const context = buildClinicContext();
-      const result = await new Promise((ok, fail) => {
-        google.script.run.withSuccessHandler(ok).withFailureHandler(fail).chatWithAI(msg, context);
-      });
+      const result = await callServerFunction('chatWithAI', msg, context);
 
       removeTypingIndicator();
 
@@ -8139,16 +8134,12 @@
     };
 
     try {
-      const result = await new Promise((ok, fail) => {
-        google.script.run.withSuccessHandler(ok).withFailureHandler(fail).saveAppointment(appointmentData);
-      });
+      const result = await callServerFunction('saveAppointment', appointmentData);
 
       if (result.success) {
         addBotMessage('Đã đặt lịch thành công! Đang cập nhật dữ liệu...');
         
-        const newData = await new Promise((ok, fail) => {
-          google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getAllData();
-        });
+        const newData = await callServerFunction('getAllData');
         if (newData) {
           doctors = newData.doctors || [];
           appointments = newData.appointments || [];
@@ -8196,15 +8187,11 @@
     };
 
     try {
-      const result = await new Promise((ok, fail) => {
-        google.script.run.withSuccessHandler(ok).withFailureHandler(fail).savePatient(patientData);
-      });
+      const result = await callServerFunction('savePatient', patientData);
 
       if (result.success) {
         addBotMessage('Đã thêm khách hàng **' + patientData.Name + '** thành công! Đang cập nhật...');
-        const newData = await new Promise((ok, fail) => {
-          google.script.run.withSuccessHandler(ok).withFailureHandler(fail).getAllData();
-        });
+        const newData = await callServerFunction('getAllData');
         if (newData) {
           doctors = newData.doctors || [];
           appointments = newData.appointments || [];
